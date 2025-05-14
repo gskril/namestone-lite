@@ -1,4 +1,4 @@
-import { isAddress, isHex } from 'viem'
+import { type Address, isAddress, isHex } from 'viem'
 import { normalize } from 'viem/ens'
 import z from 'zod'
 
@@ -12,15 +12,14 @@ export const validator = {
     }),
 
   // One or more Ethereum addresses (separated by commas)
-  addresses: z
+  addresses: z.coerce
     .string()
     .optional()
     .refine((value) => {
       if (!value) return true
       return value.split(',').every((address) => isAddress(address))
     })
-    .transform((value) => value?.split(',')),
-
+    .transform((value) => value?.split(',') as Address[]),
   numberBoolean: z.coerce
     .number()
     .optional()
@@ -33,10 +32,10 @@ export const validator = {
   nameObject: z.object({
     name: z.string().optional(),
     domain: z.string().refine(normalize),
-    address: z.string().refine(isAddress).optional(),
+    address: z.string().refine(isAddress).or(z.null()).optional().default(null),
     text_records: z.record(z.string()).optional(),
     coin_types: z.record(z.string().refine(isHex)).optional(),
-    contenthash: z.string().optional(),
+    contenthash: z.string().or(z.null()).optional().default(null),
   }),
 }
 

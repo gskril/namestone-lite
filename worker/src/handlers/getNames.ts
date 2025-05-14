@@ -33,15 +33,16 @@ export async function getNames(req: IRequest, env: Env) {
 
   const subdomains = await db
     .selectFrom('subdomain')
-    .selectAll()
+    .select(['name', 'address', 'contenthash', 'coin_types'])
+    .$if(text_records, (qb) => qb.select('text_records'))
     .where('domain_id', '=', parent.id)
+    .where('deleted_at', 'is', null)
+    .$if(!!address, (qb) => qb.where('address', 'in', address))
     .execute()
 
   const names: Name[] = subdomains.map((subdomain) => ({
     ...subdomain,
     domain: parent.name,
-    address: subdomain.address ?? undefined,
-    contenthash: subdomain.contenthash ?? undefined,
     text_records: subdomain.text_records
       ? JSON.parse(subdomain.text_records)
       : undefined,

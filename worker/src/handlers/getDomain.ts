@@ -19,6 +19,7 @@ export async function getDomain(req: IRequest, env: Env) {
     .selectFrom('domain')
     .selectAll()
     .where('name', '=', domain)
+    .where('deleted_at', 'is', null)
     .executeTakeFirst()
 
   if (!parent) {
@@ -27,8 +28,8 @@ export async function getDomain(req: IRequest, env: Env) {
 
   const formattedParent: Name = {
     domain: parent.name,
-    address: parent.address ?? undefined,
-    contenthash: parent.contenthash ?? undefined,
+    address: parent.address,
+    contenthash: parent.contenthash,
     text_records: parent.text_records
       ? JSON.parse(parent.text_records)
       : undefined,

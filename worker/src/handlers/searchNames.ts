@@ -49,9 +49,12 @@ export async function searchNames(req: IRequest, env: Env) {
 
   const subdomains = await db
     .selectFrom('subdomain')
-    .selectAll()
+    .select(['name', 'address', 'contenthash', 'coin_types'])
+    .$if(text_records, (qb) => qb.select('text_records'))
     .where('domain_id', '=', parent.id)
-    .where('name', exact_match ? '=' : 'like', exact_match ? name : `${name}%`)
+    .where('deleted_at', 'is', null)
+    .$if(exact_match, (qb) => qb.where('name', '=', name))
+    .$if(!exact_match, (qb) => qb.where('name', 'like', `${name}%`))
     .orderBy('name', 'asc')
     .limit(limit)
     .offset(offset)
@@ -60,8 +63,6 @@ export async function searchNames(req: IRequest, env: Env) {
   const names: Name[] = subdomains.map((subdomain) => ({
     ...subdomain,
     domain,
-    address: subdomain.address ?? undefined,
-    contenthash: subdomain.contenthash ?? undefined,
     text_records: subdomain.text_records
       ? JSON.parse(subdomain.text_records)
       : undefined,
