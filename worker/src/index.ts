@@ -30,7 +30,7 @@ router
   .post('/delete-name', (req, env) => deleteName(req, env))
   .post('/enable-domain', (req, env) => enableDomain(req, env))
   .post('/set-domain', (req, env) => setDomain(req, env))
-  // .post('/set-name', (req, env) => setName(req, env))
+  .post('/set-name', (req, env) => setName(req, env))
   .all('*', () => new Response('Not found', { status: 404 }))
 
 export default router

@@ -9,10 +9,10 @@ CREATE TABLE IF NOT EXISTS domain (
 	name TEXT NOT NULL,
 	address TEXT,
 	contenthash TEXT,
-	text_records TEXT NOT NULL DEFAULT '[]', -- Stringified JSON
-	coin_types TEXT NOT NULL DEFAULT '[]', -- Stringified JSON
+	text_records TEXT NOT NULL DEFAULT '{}', -- Stringified JSON
+	coin_types TEXT NOT NULL DEFAULT '{}', -- Stringified JSON
 	name_limit INT NOT NULL DEFAULT 10000,
-	admin TEXT NOT NULL DEFAULT '[]', -- Stringified JSON
+	admin TEXT NOT NULL DEFAULT '{}', -- Stringified JSON
 	created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	deleted_at TIMESTAMP
@@ -27,8 +27,8 @@ CREATE TABLE IF NOT EXISTS subdomain (
 	name TEXT NOT NULL,
 	address TEXT,
 	contenthash TEXT,
-	text_records TEXT NOT NULL DEFAULT '[]', -- Stringified JSON
-	coin_types TEXT NOT NULL DEFAULT '[]', -- Stringified JSON
+	text_records TEXT NOT NULL DEFAULT '{}', -- Stringified JSON
+	coin_types TEXT NOT NULL DEFAULT '{}', -- Stringified JSON
 	created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	deleted_at TIMESTAMP
