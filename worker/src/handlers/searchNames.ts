@@ -38,6 +38,7 @@ export async function searchNames(req: IRequest, env: Env) {
     .selectFrom('domain')
     .select('id')
     .where('name', '=', domain)
+    .where('deleted_at', 'is', null)
     .executeTakeFirst()
 
   if (!parent) {
@@ -66,9 +67,7 @@ export async function searchNames(req: IRequest, env: Env) {
     text_records: subdomain.text_records
       ? JSON.parse(subdomain.text_records)
       : undefined,
-    coin_types: subdomain.coin_types
-      ? JSON.parse(subdomain.coin_types)
-      : undefined,
+    coin_types: JSON.parse(subdomain.coin_types),
   }))
 
   return Response.json(names)

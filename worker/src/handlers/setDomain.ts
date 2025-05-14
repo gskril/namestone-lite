@@ -3,10 +3,19 @@ import { Insertable } from 'kysely'
 
 import { Database, createKysely } from '../db/kysely'
 import { Env } from '../env'
-import { Name, validator } from '../models'
+import { validator } from '../models'
 
 export async function setDomain(req: IRequest, env: Env) {
-  const body = validator.nameObject.parse(await req.json())
+  const safeParse = validator.nameObject.safeParse(await req.json())
+
+  if (!safeParse.success) {
+    return Response.json(
+      { success: false, error: safeParse.error },
+      { status: 400 }
+    )
+  }
+
+  const body = safeParse.data
   const db = createKysely(env)
 
   const formattedBody: Insertable<Database['domain']> = {

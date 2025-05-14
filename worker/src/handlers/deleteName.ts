@@ -29,6 +29,7 @@ export async function deleteName(req: IRequest, env: Env) {
     .selectFrom('domain')
     .selectAll()
     .where('name', '=', domain)
+    .where('deleted_at', 'is', null)
     .executeTakeFirst()
 
   if (!parent) {

@@ -2,6 +2,21 @@
 
 [Cloudflare Worker](https://developers.cloudflare.com/workers/) with [Cloudflare D1](https://developers.cloudflare.com/d1/) allows the API to scale with low maintenance, low latency and high availability.
 
+## Todo
+
+- [x] Define all endpoints
+- [ ] Implement all query params for each endpoint according to Namestone docs
+  - [x] Set Name
+  - [x] Get Names
+  - [x] Search Names
+  - [x] Delete Name
+  - [x] Set Domain
+  - [x] Get Domain
+  - [ ] Enable Domain
+  - [x] Get SIWE Message
+- [ ] Add API key verification
+- [ ] Add network support
+
 ## API Routes
 
 | Method | Path                | Description                                                                    |

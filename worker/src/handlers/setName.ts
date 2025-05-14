@@ -33,6 +33,7 @@ export async function setName(request: IRequest, env: Env): Promise<Response> {
     .selectFrom('domain')
     .select('id')
     .where('name', '=', domain)
+    .where('deleted_at', 'is', null)
     .executeTakeFirst()
 
   if (!parent) {

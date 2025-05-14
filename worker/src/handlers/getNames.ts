@@ -15,6 +15,15 @@ const schema = z.object({
 
 // https://namestone.com/docs/get-names
 export async function getNames(req: IRequest, env: Env) {
+  const safeParse = schema.safeParse(req.query)
+
+  if (!safeParse.success) {
+    return Response.json(
+      { success: false, error: safeParse.error },
+      { status: 400 }
+    )
+  }
+
   const { domain, address, text_records, limit, offset } = schema.parse(
     req.query
   )
@@ -25,10 +34,14 @@ export async function getNames(req: IRequest, env: Env) {
     .selectFrom('domain')
     .selectAll()
     .where('name', '=', domain)
+    .where('deleted_at', 'is', null)
     .executeTakeFirst()
 
   if (!parent) {
-    throw new Error('Domain not found')
+    return Response.json(
+      { success: false, error: 'Domain not found' },
+      { status: 404 }
+    )
   }
 
   const subdomains = await db
@@ -38,17 +51,17 @@ export async function getNames(req: IRequest, env: Env) {
     .where('domain_id', '=', parent.id)
     .where('deleted_at', 'is', null)
     .$if(!!address, (qb) => qb.where('address', 'in', address))
+    .offset(offset)
+    .limit(limit)
     .execute()
 
   const names: Name[] = subdomains.map((subdomain) => ({
-    ...subdomain,
     domain: parent.name,
+    ...subdomain,
     text_records: subdomain.text_records
       ? JSON.parse(subdomain.text_records)
       : undefined,
-    coin_types: subdomain.coin_types
-      ? JSON.parse(subdomain.coin_types)
-      : undefined,
+    coin_types: JSON.parse(subdomain.coin_types),
   }))
 
   return Response.json(names)

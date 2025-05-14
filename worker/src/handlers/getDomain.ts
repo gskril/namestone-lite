@@ -11,8 +11,16 @@ const schema = z.object({
 
 // https://namestone.com/docs/get-domain
 export async function getDomain(req: IRequest, env: Env) {
-  const { domain } = schema.parse(req.query)
+  const safeParse = schema.safeParse(req.query)
 
+  if (!safeParse.success) {
+    return Response.json(
+      { success: false, error: safeParse.error },
+      { status: 400 }
+    )
+  }
+
+  const { domain } = safeParse.data
   const db = createKysely(env)
 
   const parent = await db
@@ -30,10 +38,8 @@ export async function getDomain(req: IRequest, env: Env) {
     domain: parent.name,
     address: parent.address,
     contenthash: parent.contenthash,
-    text_records: parent.text_records
-      ? JSON.parse(parent.text_records)
-      : undefined,
-    coin_types: parent.coin_types ? JSON.parse(parent.coin_types) : undefined,
+    text_records: JSON.parse(parent.text_records),
+    coin_types: JSON.parse(parent.coin_types),
   }
 
   return Response.json(formattedParent)

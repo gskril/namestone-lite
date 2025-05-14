@@ -20,6 +20,7 @@ export const validator = {
       return value.split(',').every((address) => isAddress(address))
     })
     .transform((value) => value?.split(',') as Address[]),
+
   numberBoolean: z.coerce
     .number()
     .optional()
@@ -33,8 +34,8 @@ export const validator = {
     name: z.string().optional(),
     domain: z.string().refine(normalize),
     address: z.string().refine(isAddress).or(z.null()).optional().default(null),
-    text_records: z.record(z.string()).optional(),
-    coin_types: z.record(z.string().refine(isHex)).optional(),
+    text_records: z.record(z.string()).optional().default({}),
+    coin_types: z.record(z.string().refine(isHex)).optional().default({}),
     contenthash: z.string().or(z.null()).optional().default(null),
   }),
 }
