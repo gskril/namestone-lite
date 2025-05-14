@@ -41,7 +41,7 @@ export interface Database {
   siwe: {
     address: Address
     message: string
-    created_at: Generated<Date>
+    created_at: ColumnType<Date, never, string | undefined>
   }
 }
 

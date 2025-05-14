@@ -42,7 +42,6 @@ export async function getSiweMessage(req: IRequest, env: Env) {
     .onConflict((oc) =>
       oc.columns(['address']).doUpdateSet({
         message,
-        // @ts-expect-error - D1 doesn't like Date objects
         created_at: new Date().toISOString(),
       })
     )

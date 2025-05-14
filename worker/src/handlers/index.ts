@@ -1,3 +1,4 @@
+export * from './deleteName'
 export * from './getDomain'
 export * from './getNames'
 export * from './getSiweMessage'
