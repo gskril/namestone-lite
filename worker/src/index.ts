@@ -1,7 +1,7 @@
 import { AutoRouter, IRequest, cors } from 'itty-router'
 
 import { Env } from './env'
-import { getNames, setDomain, setName } from './handlers'
+import { getDomain, getNames, setDomain, setName } from './handlers'
 
 const { preflight, corsify } = cors()
 
@@ -13,7 +13,7 @@ const router = AutoRouter<IRequest, CFArgs>({
 })
 
 router
-  // .get('/get-domain', (req, env) => getDomain(req, env))
+  .get('/get-domain', (req, env) => getDomain(req, env))
   .get('/get-names', (req, env) => getNames(req, env))
   .get('/health', () => Response.json({ success: true }))
   .post('/set-domain', (req, env) => setDomain(req, env))

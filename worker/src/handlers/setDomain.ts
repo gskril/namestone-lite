@@ -12,6 +12,8 @@ export async function setDomain(req: IRequest, env: Env) {
 
   const formattedBody: Insertable<Database['domain']> = {
     name: body.domain,
+    address: body.address,
+    contenthash: body.contenthash,
     text_records: JSON.stringify(body.text_records),
     coin_types: JSON.stringify(body.coin_types),
     network: 1,
