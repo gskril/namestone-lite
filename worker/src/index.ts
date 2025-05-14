@@ -7,6 +7,7 @@ import {
   getDomain,
   getNames,
   getSiweMessage,
+  searchNames,
   setDomain,
   setName,
 } from './handlers'
@@ -25,7 +26,7 @@ router
   .get('/get-names', (req, env) => getNames(req, env))
   .get('/get-siwe-message', (req, env) => getSiweMessage(req, env))
   .get('/health', () => Response.json({ success: true }))
-  // .get('/search-names', (req, env) => searchNames(req, env))
+  .get('/search-names', (req, env) => searchNames(req, env))
   .post('/delete-name', (req, env) => deleteName(req, env))
   .post('/enable-domain', (req, env) => enableDomain(req, env))
   .post('/set-domain', (req, env) => setDomain(req, env))

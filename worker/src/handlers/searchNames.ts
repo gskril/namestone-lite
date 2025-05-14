@@ -1,0 +1,74 @@
+import { IRequest } from 'itty-router'
+import { z } from 'zod'
+
+import { createKysely } from '../db/kysely'
+import { Env } from '../env'
+import { Name, validator } from '../models'
+
+const schema = z.object({
+  domain: validator.domain,
+  name: z.string().min(1),
+  text_records: validator.numberBoolean.default(1),
+  limit: validator.limit,
+  offset: validator.offset,
+  exact_match: validator.numberBoolean.default(0),
+})
+
+// https://namestone.com/docs/search-names
+export async function searchNames(req: IRequest, env: Env) {
+  const safeParse = schema.safeParse(req.query)
+
+  if (!safeParse.success) {
+    return Response.json(
+      {
+        success: false,
+        error: 'Invalid parameters',
+        issues: safeParse.error.issues,
+      },
+      { status: 400 }
+    )
+  }
+
+  const { domain, name, text_records, limit, offset, exact_match } =
+    schema.parse(req.query)
+
+  const db = createKysely(env)
+
+  const parent = await db
+    .selectFrom('domain')
+    .select('id')
+    .where('name', '=', domain)
+    .executeTakeFirst()
+
+  if (!parent) {
+    return Response.json(
+      { success: false, error: 'Domain not found' },
+      { status: 404 }
+    )
+  }
+
+  const subdomains = await db
+    .selectFrom('subdomain')
+    .selectAll()
+    .where('domain_id', '=', parent.id)
+    .where('name', exact_match ? '=' : 'like', exact_match ? name : `${name}%`)
+    .orderBy('name', 'asc')
+    .limit(limit)
+    .offset(offset)
+    .execute()
+
+  const names: Name[] = subdomains.map((subdomain) => ({
+    ...subdomain,
+    domain,
+    address: subdomain.address ?? undefined,
+    contenthash: subdomain.contenthash ?? undefined,
+    text_records: subdomain.text_records
+      ? JSON.parse(subdomain.text_records)
+      : undefined,
+    coin_types: subdomain.coin_types
+      ? JSON.parse(subdomain.coin_types)
+      : undefined,
+  }))
+
+  return Response.json(names)
+}
