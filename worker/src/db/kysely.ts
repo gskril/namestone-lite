@@ -14,7 +14,7 @@ interface BaseName {
   contenthash: string | null
   text_records: JSON
   coin_types: JSON
-  created_at: ColumnType<Date, never, never>
+  created_at: GeneratedAlways<Date>
   updated_at: ColumnType<Date, never, string | undefined>
   deleted_at: ColumnType<Date, never, string | undefined>
 }
@@ -34,8 +34,14 @@ export interface Database {
     id: GeneratedAlways<number>
     domain_id: number
     key: string
-    created_at: ColumnType<Date, never, never>
+    created_at: GeneratedAlways<Date>
     deleted_at: ColumnType<Date, never, string | undefined>
+  }
+
+  siwe: {
+    address: Address
+    message: string
+    created_at: Generated<Date>
   }
 }
 
