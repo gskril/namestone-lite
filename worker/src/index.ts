@@ -3,6 +3,7 @@ import { AutoRouter, IRequest, cors } from 'itty-router'
 import { Env } from './env'
 import {
   deleteName,
+  enableDomain,
   getDomain,
   getNames,
   getSiweMessage,
@@ -26,7 +27,7 @@ router
   .get('/health', () => Response.json({ success: true }))
   // .get('/search-names', (req, env) => searchNames(req, env))
   .post('/delete-name', (req, env) => deleteName(req, env))
-  // .post('/enable-domain', (req, env) => enableDomain(req, env))
+  .post('/enable-domain', (req, env) => enableDomain(req, env))
   .post('/set-domain', (req, env) => setDomain(req, env))
   // .post('/set-name', (req, env) => setName(req, env))
   .all('*', () => new Response('Not found', { status: 404 }))

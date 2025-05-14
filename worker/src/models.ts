@@ -24,7 +24,6 @@ export const validator = {
   numberBoolean: z.coerce
     .number()
     .optional()
-    .default(1)
     .transform((val) => val === 1),
 
   limit: z.coerce.number().optional().default(50),

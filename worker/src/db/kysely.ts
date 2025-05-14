@@ -12,8 +12,8 @@ interface BaseName {
   name: string
   address: Address | null
   contenthash: string | null
-  text_records: JSON
-  coin_types: JSON
+  text_records: Generated<JSON>
+  coin_types: Generated<JSON>
   created_at: GeneratedAlways<Date>
   updated_at: ColumnType<Date, never, string | undefined>
   deleted_at: ColumnType<Date, never, string | undefined>

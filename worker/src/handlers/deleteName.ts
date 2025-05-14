@@ -15,7 +15,10 @@ export async function deleteName(req: IRequest, env: Env) {
   const safeParse = schema.safeParse(await req.json())
 
   if (!safeParse.success) {
-    return Response.json({ error: safeParse.error.name }, { status: 400 })
+    return Response.json(
+      { error: 'Invalid parameters', issues: safeParse.error.issues },
+      { status: 400 }
+    )
   }
 
   const { name, domain } = safeParse.data

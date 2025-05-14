@@ -1,4 +1,5 @@
 export * from './deleteName'
+export * from './enableDomain'
 export * from './getDomain'
 export * from './getNames'
 export * from './getSiweMessage'

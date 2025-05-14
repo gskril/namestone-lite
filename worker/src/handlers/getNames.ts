@@ -8,7 +8,7 @@ import { Name, validator } from '../models'
 const schema = z.object({
   domain: validator.domain,
   address: validator.addresses,
-  text_records: validator.numberBoolean,
+  text_records: validator.numberBoolean.default(1),
   limit: validator.limit,
   offset: validator.offset,
 })
