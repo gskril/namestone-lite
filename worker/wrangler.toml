@@ -1,0 +1,9 @@
+name = "namestone-api"
+main = "src/index.ts"
+compatibility_date = "2024-05-13"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "namestone"
+database_id = "ad33aff6-1939-4cbf-a0fc-b1f884adae46"
+
