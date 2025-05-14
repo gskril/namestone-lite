@@ -7,7 +7,6 @@ import { Name, validator } from '../models'
 
 export async function setDomain(req: IRequest, env: Env) {
   const body = validator.nameObject.parse(await req.json())
-  console.log(body)
   const db = createKysely(env)
 
   const formattedBody: Insertable<Database['domain']> = {

@@ -1,6 +1,6 @@
-DROP TABLE IF EXISTS domain;
 DROP TABLE IF EXISTS subdomain;
 DROP TABLE IF EXISTS api_key;
+DROP TABLE IF EXISTS domain;
 DROP TABLE IF EXISTS siwe;
 
 CREATE TABLE IF NOT EXISTS domain (
@@ -33,6 +33,9 @@ CREATE TABLE IF NOT EXISTS subdomain (
 	updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	deleted_at TIMESTAMP
 );
+
+-- Create a constraint where the (name, domain_id) is unique
+CREATE UNIQUE INDEX IF NOT EXISTS idx_subdomain_name_domain_id ON subdomain (name, domain_id);
 
 CREATE TABLE IF NOT EXISTS api_key (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,

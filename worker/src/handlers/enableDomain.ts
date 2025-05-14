@@ -86,7 +86,7 @@ export async function enableDomain(req: IRequest, env: Env) {
       network: 1,
     })
     .returning('id')
-    .executeTakeFirst()
+    .executeTakeFirstOrThrow()
 
   if (!domainInsert) {
     return Response.json(
@@ -104,6 +104,8 @@ export async function enableDomain(req: IRequest, env: Env) {
       key: apiKey,
     })
     .execute()
+
+  await db.deleteFrom('siwe').where('address', '=', address).execute()
 
   return Response.json({ success: true })
 }
