@@ -31,7 +31,9 @@ export async function setDomain(req: IRequest, env: Env) {
     .insertInto('domain')
     .values(formattedBody)
     .onConflict((oc) =>
-      oc.columns(['name', 'network']).doUpdateSet(formattedBody)
+      oc
+        .columns(['name', 'network'])
+        .doUpdateSet({ ...formattedBody, updated_at: new Date().toISOString() })
     )
     .execute()
 
