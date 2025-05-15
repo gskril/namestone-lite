@@ -1,5 +1,5 @@
 import { IRequest } from 'itty-router'
-import { isAddress, isHex } from 'viem'
+import { Address, isAddress, isHex, namehash, parseAbi } from 'viem'
 import { SiweMessage, createSiweMessage, parseSiweMessage } from 'viem/siwe'
 import { z } from 'zod'
 
@@ -43,7 +43,14 @@ export async function enableDomain(req: IRequest, env: Env) {
     cycle_key,
   } = safeParse.data
 
-  // TODO: Check if the domain is owned by `address` onchain
+  const owner = await getOwner(domain, env)
+
+  if (owner !== address) {
+    return Response.json(
+      { success: false, error: 'Your wallet needs to own the domain' },
+      { status: 400 }
+    )
+  }
 
   const db = createKysely(env)
   const savedSiweMessage = await db
@@ -82,30 +89,90 @@ export async function enableDomain(req: IRequest, env: Env) {
     .values({
       name: domain,
       address,
-      admin: JSON.stringify([address]),
       network: 1,
     })
-    .returning('id')
-    .executeTakeFirstOrThrow()
+    .onConflict((oc) =>
+      oc.columns(['name', 'network']).doUpdateSet({
+        updated_at: new Date().toISOString(),
+      })
+    )
+    .returning(['id'])
+    .executeTakeFirst()
 
   if (!domainInsert) {
     return Response.json(
       { success: false, error: 'Failed to create domain' },
-      { status: 500 }
+      { status: 400 }
     )
   }
 
-  const apiKey = crypto.randomUUID()
-
+  // Make the address an admin of the domain
   await db
-    .insertInto('api_key')
+    .insertInto('admin')
     .values({
       domain_id: domainInsert.id,
-      key: apiKey,
+      address,
     })
+    .onConflict((oc) =>
+      oc.columns(['domain_id', 'address']).doUpdateSet({
+        address,
+      })
+    )
     .execute()
+
+  let apiKey: string
+  const existingApiKey = await db
+    .selectFrom('api_key')
+    .where('domain_id', '=', domainInsert.id)
+    .where('deleted_at', 'is', null)
+    .select('key')
+    .executeTakeFirst()
+
+  if (!existingApiKey || cycle_key) {
+    // If domain doesn't exist, or it does exist and cycle_key is true, we create a new key
+    apiKey = crypto.randomUUID()
+    await db
+      .insertInto('api_key')
+      .values({
+        domain_id: domainInsert.id,
+        key: apiKey,
+      })
+      .execute()
+  } else {
+    // If domain exists and cycle_key is false, we return the existing key
+    apiKey = existingApiKey.key
+  }
 
   await db.deleteFrom('siwe').where('address', '=', address).execute()
 
-  return Response.json({ success: true })
+  return Response.json({ message: 'Domain enabled!', api_key: apiKey, domain })
+}
+
+async function getOwner(domain: string, env: Env) {
+  let owner: Address
+  const client = getPublicClient(env)
+
+  const registryOwner = await client.readContract({
+    address: '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e',
+    abi: parseAbi(['function owner(bytes32) view returns (address)']),
+    functionName: 'owner',
+    args: [namehash(domain)],
+  })
+  owner = registryOwner
+
+  const nameWrappers = [
+    '0xD4416b13d2b3a9aBae7AcD5D6C2BbDBE25686401', // Mainnet
+    '0x0635513f179D50A207757E05759CbD106d7dFcE8', // Sepolia
+  ]
+
+  if (nameWrappers.includes(registryOwner)) {
+    owner = await client.readContract({
+      address: registryOwner,
+      abi: parseAbi(['function ownerOf(uint256) view returns (address)']),
+      functionName: 'ownerOf',
+      args: [BigInt(namehash(domain))],
+    })
+  }
+
+  return owner
 }

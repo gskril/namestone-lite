@@ -23,7 +23,6 @@ export interface Database {
   domain: BaseName & {
     network: number
     name_limit: Generated<number>
-    admin: Generated<JSON>
   }
 
   subdomain: BaseName & {
@@ -34,6 +33,14 @@ export interface Database {
     id: GeneratedAlways<number>
     domain_id: number
     key: string
+    created_at: GeneratedAlways<Date>
+    deleted_at: ColumnType<Date, never, string | undefined>
+  }
+
+  admin: {
+    id: GeneratedAlways<number>
+    domain_id: number
+    address: Address
     created_at: GeneratedAlways<Date>
     deleted_at: ColumnType<Date, never, string | undefined>
   }

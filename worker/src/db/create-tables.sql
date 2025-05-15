@@ -1,5 +1,6 @@
 DROP TABLE IF EXISTS subdomain;
 DROP TABLE IF EXISTS api_key;
+DROP TABLE IF EXISTS admin;
 DROP TABLE IF EXISTS domain;
 DROP TABLE IF EXISTS siwe;
 
@@ -12,7 +13,6 @@ CREATE TABLE IF NOT EXISTS domain (
 	text_records TEXT NOT NULL DEFAULT '{}', -- Stringified JSON
 	coin_types TEXT NOT NULL DEFAULT '{}', -- Stringified JSON
 	name_limit INT NOT NULL DEFAULT 10000,
-	admin TEXT NOT NULL DEFAULT '{}', -- Stringified JSON
 	created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	deleted_at TIMESTAMP
@@ -20,6 +20,17 @@ CREATE TABLE IF NOT EXISTS domain (
 
 -- Create a constraint where the (name, network) is unique
 CREATE UNIQUE INDEX IF NOT EXISTS idx_domain_name_network ON domain (name, network);
+
+CREATE TABLE IF NOT EXISTS admin (
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	domain_id INTEGER NOT NULL REFERENCES domain(id),
+	address TEXT NOT NULL,
+	created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	deleted_at TIMESTAMP
+);
+
+-- Create a constraint where the (domain_id, address) is unique
+CREATE UNIQUE INDEX IF NOT EXISTS idx_admin_domain_id_address ON admin (domain_id, address);
 
 CREATE TABLE IF NOT EXISTS subdomain (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
