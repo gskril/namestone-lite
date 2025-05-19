@@ -6,6 +6,6 @@ import { Env } from './env'
 export function getPublicClient(env: Env) {
   return createPublicClient({
     chain: mainnet,
-    transport: http(),
+    transport: http(env.RPC_URL),
   })
 }

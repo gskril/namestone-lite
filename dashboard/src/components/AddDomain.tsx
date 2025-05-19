@@ -39,28 +39,28 @@ export function AddDomain() {
     const formData = new FormData(e.target as HTMLFormElement)
     const domain = formData.get('domain') as string
 
-    try {
-      const res = await namestoneClient().enableDomain({
-        company_name: 'Fake company',
-        email: 'bob@example.com',
-        address: address!,
-        domain,
-        signature: siwe.data!,
-      })
+    const promise = namestoneClient().enableDomain({
+      company_name: 'Fake company',
+      email: 'bob@example.com',
+      address: address!,
+      domain,
+      signature: siwe.data!,
+    })
 
-      setApiKey(domain, res.api_key)
-      toast.success('Domain added', {
-        description: 'API key saved to local storage',
-      })
-      siwe.reset()
-      domains.refetch()
-    } catch (error) {
-      if (error instanceof Error) {
-        toast.error(error.message)
-      } else {
-        toast.error('Failed to add domain')
-      }
-    }
+    toast.promise(promise, {
+      loading: 'Adding domain...',
+      success: (res) => {
+        setApiKey(domain, res.api_key)
+        siwe.reset()
+        domains.refetch()
+
+        return {
+          message: 'Domain added',
+          description: 'API key saved to local storage',
+        }
+      },
+      error: 'Failed to add domain',
+    })
   }
 
   return (

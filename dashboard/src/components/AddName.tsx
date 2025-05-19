@@ -27,18 +27,20 @@ export function AddName({ apiKey, domain, onSuccess }: Props) {
     const name = formData.get('name') as string
     const address = formData.get('address') as string
 
-    try {
-      await namestoneClient(apiKey).setName({
-        domain,
-        name,
-        address,
-      })
+    const promise = namestoneClient(apiKey).setName({
+      domain,
+      name,
+      address,
+    })
 
-      toast.success('Name created')
-      onSuccess()
-    } catch (error) {
-      toast.error('Failed to set name')
-    }
+    toast.promise(promise, {
+      loading: 'Adding name...',
+      success: () => {
+        onSuccess()
+        return 'Name created'
+      },
+      error: 'Failed to set name',
+    })
   }
 
   return (
