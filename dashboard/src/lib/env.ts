@@ -1,3 +1,5 @@
 export const env = {
-  apiUrl: 'http://localhost:8787',
+  appUrl: import.meta.env.VITE_APP_URL,
+  apiUrl: import.meta.env.VITE_API_URL,
+  siweUri: import.meta.env.VITE_SIWE_URI,
 }

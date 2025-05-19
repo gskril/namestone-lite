@@ -1,3 +1,8 @@
+import { useQuery } from '@tanstack/react-query'
+import { Plus } from 'lucide-react'
+import { toast } from 'sonner'
+import { useAccount, useSignMessage } from 'wagmi'
+
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -8,15 +13,13 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
-import { Button } from './ui/button'
-import { useAccount, useSignMessage } from 'wagmi'
-import { useQuery } from '@tanstack/react-query'
-import { namestoneClient } from '@/lib/namestone'
 import { useDomains } from '@/hooks/useDomains'
-import { Input } from './ui/input'
-import { toast } from 'sonner'
 import { setApiKey } from '@/hooks/useLocalApiKey'
-import { Plus } from 'lucide-react'
+import { env } from '@/lib/env'
+import { namestoneClient } from '@/lib/namestone'
+
+import { Button } from './ui/button'
+import { Input } from './ui/input'
 
 export function AddDomain() {
   const { address } = useAccount()
@@ -28,8 +31,8 @@ export function AddDomain() {
     queryFn: async () =>
       namestoneClient().getSiweMessage({
         address: address!,
-        domain: 'localhost:5173',
-        uri: 'http://localhost:8787/get-siwe-message',
+        domain: env.appUrl,
+        uri: env.siweUri,
       }),
     enabled: !!address,
   })
