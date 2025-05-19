@@ -1,8 +1,15 @@
+import { Route, Routes } from 'react-router-dom'
+
+import { Home } from './screens/Home'
+
 function App() {
   return (
-    <div>
-      <h1 className="text-2xl font-bold">Namestone Dashboard</h1>
-    </div>
+    <main>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/:domain" element={<Home />} />
+      </Routes>
+    </main>
   )
 }
 
