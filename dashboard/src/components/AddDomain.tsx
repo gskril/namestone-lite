@@ -16,6 +16,7 @@ import { useDomains } from '@/hooks/useDomains'
 import { Input } from './ui/input'
 import { toast } from 'sonner'
 import { setApiKey } from '@/hooks/useLocalApiKey'
+import { Plus } from 'lucide-react'
 
 export function AddDomain() {
   const { address } = useAccount()
@@ -63,12 +64,13 @@ export function AddDomain() {
     <AlertDialog>
       <AlertDialogTrigger asChild>
         <Button variant="outline" disabled={!address}>
+          <Plus />
           Add Domain
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Add a domain</AlertDialogTitle>
+          <AlertDialogTitle>Add a Domain</AlertDialogTitle>
           <AlertDialogDescription>
             Add a domain to your account.
           </AlertDialogDescription>

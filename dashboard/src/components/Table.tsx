@@ -22,6 +22,7 @@ import { Label } from './ui/label'
 import { useEnsAvatar, useEnsName } from 'wagmi'
 import { Address } from 'viem'
 import { truncateAddress } from '@/lib/utils'
+import { EditName } from './EditName'
 
 export function NamesTable() {
   const { domain } = useParams()
@@ -38,7 +39,7 @@ export function NamesTable() {
         )}
       </div>
 
-      {!apiKey && (
+      {!!domain && !apiKey && (
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
           <AlertTitle>No API Key</AlertTitle>
@@ -68,7 +69,13 @@ export function NamesTable() {
                 <TableRow key={name.name}>
                   <TableCell className="font-medium">{name.name}</TableCell>
                   <TableCell>{name.address}</TableCell>
-                  <TableCell>
+                  <TableCell className="flex items-center gap-2">
+                    <EditName
+                      apiKey={apiKey!}
+                      name={name}
+                      onSuccess={names.refetch}
+                    />
+
                     <Button
                       size="sm"
                       variant="destructive"

@@ -12,6 +12,7 @@ import { Button } from './ui/button'
 import { namestoneClient } from '@/lib/namestone'
 import { Input } from './ui/input'
 import { toast } from 'sonner'
+import { Plus } from 'lucide-react'
 
 type Props = {
   apiKey: string
@@ -43,11 +44,14 @@ export function AddName({ apiKey, domain, onSuccess }: Props) {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant="outline">Add Name</Button>
+        <Button variant="outline">
+          <Plus />
+          Add Name
+        </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Add a name</AlertDialogTitle>
+          <AlertDialogTitle>Add a Name</AlertDialogTitle>
           <AlertDialogDescription>
             Create a subname under {domain}.
           </AlertDialogDescription>
