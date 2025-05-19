@@ -94,6 +94,7 @@ export async function enableDomain(req: IRequest, env: Env) {
     .onConflict((oc) =>
       oc.columns(['name', 'network']).doUpdateSet({
         updated_at: new Date().toISOString(),
+        deleted_at: null,
       })
     )
     .returning(['id'])

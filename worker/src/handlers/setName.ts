@@ -56,9 +56,11 @@ export async function setName(request: IRequest, env: Env): Promise<Response> {
     .insertInto('subdomain')
     .values(formattedBody)
     .onConflict((oc) =>
-      oc
-        .columns(['name', 'domain_id'])
-        .doUpdateSet({ ...formattedBody, updated_at: new Date().toISOString() })
+      oc.columns(['name', 'domain_id']).doUpdateSet({
+        ...formattedBody,
+        updated_at: new Date().toISOString(),
+        deleted_at: null,
+      })
     )
     .execute()
 

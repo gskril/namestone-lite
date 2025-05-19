@@ -32,7 +32,7 @@ export async function getNames(req: IRequest, env: Env) {
 
   const parent = await db
     .selectFrom('domain')
-    .selectAll()
+    .select(['id', 'name'])
     .where('name', '=', domain)
     .where('deleted_at', 'is', null)
     .executeTakeFirst()
