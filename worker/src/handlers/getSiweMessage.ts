@@ -5,11 +5,10 @@ import { z } from 'zod'
 
 import { createKysely } from '../db/kysely'
 import { Env } from '../env'
-import { validator } from '../models'
 
 const schema = z.object({
   address: z.string().refine(isAddress),
-  domain: validator.domain.default('namestone.com'),
+  domain: z.string().default('namestone.com'),
   uri: z
     .string()
     .url()

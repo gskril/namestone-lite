@@ -9,12 +9,10 @@ import { validator } from '../models'
 import { getPublicClient } from '../viem'
 
 const schema = z.object({
-  company_name: z.string().min(1),
   email: z.string().email(),
   address: z.string().refine(isAddress),
   domain: validator.domain.refine((value) => value.split('.').length == 2),
   signature: z.string().refine(isHex),
-  api_key: z.string().min(1).optional(),
   cycle_key: validator.numberBoolean.optional().default(0),
 })
 
@@ -33,15 +31,7 @@ export async function enableDomain(req: IRequest, env: Env) {
     )
   }
 
-  const {
-    company_name,
-    email,
-    address,
-    domain,
-    signature,
-    api_key,
-    cycle_key,
-  } = safeParse.data
+  const { email, address, domain, signature, cycle_key } = safeParse.data
 
   const owner = await getOwner(domain, env)
 
@@ -90,10 +80,13 @@ export async function enableDomain(req: IRequest, env: Env) {
       name: domain,
       address,
       network: 1,
+      email,
     })
     .onConflict((oc) =>
       oc.columns(['name', 'network']).doUpdateSet({
+        email,
         updated_at: new Date().toISOString(),
+        deleted_at: null,
       })
     )
     .returning(['id'])

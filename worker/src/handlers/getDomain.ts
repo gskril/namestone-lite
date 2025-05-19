@@ -34,12 +34,19 @@ export async function getDomain(req: IRequest, env: Env) {
     throw new Error('Domain not found')
   }
 
-  const formattedParent: Name = {
+  const admins = await db
+    .selectFrom('admin')
+    .select(['address'])
+    .where('domain_id', '=', parent.id)
+    .execute()
+
+  const formattedParent: Name & { admins: string[] } = {
     domain: parent.name,
     address: parent.address,
     contenthash: parent.contenthash,
     text_records: JSON.parse(parent.text_records),
     coin_types: JSON.parse(parent.coin_types),
+    admins: admins.map((a) => a.address),
   }
 
   return Response.json(formattedParent)

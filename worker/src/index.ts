@@ -5,6 +5,7 @@ import {
   deleteName,
   enableDomain,
   getDomain,
+  getDomains,
   getNames,
   getSiweMessage,
   searchNames,
@@ -22,6 +23,7 @@ const router = AutoRouter<IRequest, CFArgs>({
 })
 
 router
+  .get('/get-domains', (req, env) => getDomains(req, env))
   .get('/get-domain', (req, env) => getDomain(req, env))
   .get('/get-names', (req, env) => getNames(req, env))
   .get('/get-siwe-message', (req, env) => getSiweMessage(req, env))
