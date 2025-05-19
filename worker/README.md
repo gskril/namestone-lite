@@ -5,16 +5,16 @@
 ## Todo
 
 - [x] Define all endpoints
-- [ ] Implement all query params for each endpoint according to Namestone docs
+- [x] Implement all query params for each endpoint according to Namestone docs
   - [x] Set Name
   - [x] Get Names
   - [x] Search Names
   - [x] Delete Name
   - [x] Set Domain
   - [x] Get Domain
-  - [ ] Enable Domain
+  - [x] Enable Domain
   - [x] Get SIWE Message
-- [ ] Add API key verification
+- [x] Add API key verification
 - [ ] Add network support
 
 ## API Routes

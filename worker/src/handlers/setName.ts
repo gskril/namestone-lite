@@ -2,6 +2,7 @@ import { IRequest } from 'itty-router'
 import { Insertable } from 'kysely'
 import { z } from 'zod'
 
+import { verifyApiKey } from '../auth'
 import { Database, createKysely } from '../db/kysely'
 import { Env } from '../env'
 import { validator } from '../models'
@@ -28,6 +29,15 @@ export async function setName(request: IRequest, env: Env): Promise<Response> {
     safeParse.data
 
   const db = createKysely(env)
+
+  const isAuthed = await verifyApiKey({ request, domain, db })
+
+  if (!isAuthed) {
+    return Response.json(
+      { success: false, error: 'Unauthorized' },
+      { status: 401 }
+    )
+  }
 
   const parent = await db
     .selectFrom('domain')

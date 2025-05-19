@@ -1,6 +1,7 @@
 import { IRequest } from 'itty-router'
 import { z } from 'zod'
 
+import { verifyApiKey } from '../auth'
 import { createKysely } from '../db/kysely'
 import { Env } from '../env'
 import { Name, validator } from '../models'
@@ -22,6 +23,15 @@ export async function getDomain(req: IRequest, env: Env) {
 
   const { domain } = safeParse.data
   const db = createKysely(env)
+
+  const isAuthed = await verifyApiKey({ request: req, domain, db })
+
+  if (!isAuthed) {
+    return Response.json(
+      { success: false, error: 'Unauthorized' },
+      { status: 401 }
+    )
+  }
 
   const parent = await db
     .selectFrom('domain')
