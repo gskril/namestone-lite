@@ -22,6 +22,7 @@ interface BaseName {
 export interface Database {
   domain: BaseName & {
     network: number
+    email: string | null
     name_limit: Generated<number>
   }
 

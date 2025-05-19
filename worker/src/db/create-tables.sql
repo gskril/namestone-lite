@@ -7,6 +7,7 @@ DROP TABLE IF EXISTS siwe;
 CREATE TABLE IF NOT EXISTS domain (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	network INT NOT NULL,
+	email TEXT,
 	name TEXT NOT NULL,
 	address TEXT,
 	contenthash TEXT,
