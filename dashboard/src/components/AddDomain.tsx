@@ -32,7 +32,7 @@ export function AddDomain() {
       namestoneClient().getSiweMessage({
         address: address!,
         domain: env.appUrl,
-        uri: env.siweUri,
+        uri: env.apiUrl,
       }),
     enabled: !!address,
   })

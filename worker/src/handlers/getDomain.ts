@@ -5,6 +5,7 @@ import { verifyApiKey } from '../auth'
 import { createKysely } from '../db/kysely'
 import { Env } from '../env'
 import { Name, validator } from '../models'
+import { parseVersion } from '../utils'
 
 const schema = z.object({
   domain: validator.domain,
@@ -12,6 +13,7 @@ const schema = z.object({
 
 // https://namestone.com/docs/get-domain
 export async function getDomain(req: IRequest, env: Env) {
+  const { network } = parseVersion(req)
   const safeParse = schema.safeParse(req.query)
 
   if (!safeParse.success) {
@@ -24,7 +26,7 @@ export async function getDomain(req: IRequest, env: Env) {
   const { domain } = safeParse.data
   const db = createKysely(env)
 
-  const isAuthed = await verifyApiKey({ request: req, domain, db })
+  const isAuthed = await verifyApiKey({ req, domain, db })
 
   if (!isAuthed) {
     return Response.json(
@@ -37,6 +39,7 @@ export async function getDomain(req: IRequest, env: Env) {
     .selectFrom('domain')
     .selectAll()
     .where('name', '=', domain)
+    .where('network', '=', network)
     .where('deleted_at', 'is', null)
     .executeTakeFirst()
 

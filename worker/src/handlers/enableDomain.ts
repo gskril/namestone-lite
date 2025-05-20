@@ -6,6 +6,7 @@ import { z } from 'zod'
 import { createKysely } from '../db/kysely'
 import { Env } from '../env'
 import { validator } from '../models'
+import { parseVersion } from '../utils'
 import { getPublicClient } from '../viem'
 
 const schema = z.object({
@@ -18,6 +19,7 @@ const schema = z.object({
 
 // https://namestone.com/docs/enable-domain
 export async function enableDomain(req: IRequest, env: Env) {
+  const { network } = parseVersion(req)
   const safeParse = schema.safeParse(await req.json())
 
   if (!safeParse.success) {
@@ -79,7 +81,7 @@ export async function enableDomain(req: IRequest, env: Env) {
     .values({
       name: domain,
       address,
-      network: 1,
+      network,
       email,
     })
     .onConflict((oc) =>

@@ -5,8 +5,10 @@ import { verifyApiKey } from '../auth'
 import { Database, createKysely } from '../db/kysely'
 import { Env } from '../env'
 import { validator } from '../models'
+import { parseVersion } from '../utils'
 
 export async function setDomain(req: IRequest, env: Env) {
+  const { network } = parseVersion(req)
   const safeParse = validator.nameObject.safeParse(await req.json())
 
   if (!safeParse.success) {
@@ -19,7 +21,7 @@ export async function setDomain(req: IRequest, env: Env) {
   const body = safeParse.data
   const db = createKysely(env)
 
-  const isAuthed = await verifyApiKey({ request: req, domain: body.domain, db })
+  const isAuthed = await verifyApiKey({ req, domain: body.domain, db })
 
   if (!isAuthed) {
     return Response.json(
@@ -34,7 +36,7 @@ export async function setDomain(req: IRequest, env: Env) {
     contenthash: body.contenthash,
     text_records: JSON.stringify(body.text_records),
     coin_types: JSON.stringify(body.coin_types),
-    network: 1,
+    network,
   }
 
   await db

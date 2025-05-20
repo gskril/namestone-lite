@@ -23,16 +23,16 @@ const router = AutoRouter<IRequest, CFArgs>({
 })
 
 router
-  .get('/get-domains', (req, env) => getDomains(req, env))
-  .get('/get-domain', (req, env) => getDomain(req, env))
-  .get('/get-names', (req, env) => getNames(req, env))
-  .get('/get-siwe-message', (req, env) => getSiweMessage(req, env))
-  .get('/health', () => Response.json({ success: true }))
-  .get('/search-names', (req, env) => searchNames(req, env))
-  .post('/delete-name', (req, env) => deleteName(req, env))
-  .post('/enable-domain', (req, env) => enableDomain(req, env))
-  .post('/set-domain', (req, env) => setDomain(req, env))
-  .post('/set-name', (req, env) => setName(req, env))
+  .get('/:version/get-domains', (req, env) => getDomains(req, env))
+  .get('/:version/get-domain', (req, env) => getDomain(req, env))
+  .get('/:version/get-names', (req, env) => getNames(req, env))
+  .get('/:version/get-siwe-message', (req, env) => getSiweMessage(req, env))
+  .get('/:version/health', () => Response.json({ success: true }))
+  .get('/:version/search-names', (req, env) => searchNames(req, env))
+  .post('/:version/delete-name', (req, env) => deleteName(req, env))
+  .post('/:version/enable-domain', (req, env) => enableDomain(req, env))
+  .post('/:version/set-domain', (req, env) => setDomain(req, env))
+  .post('/:version/set-name', (req, env) => setName(req, env))
   .all('*', () => new Response('Not found', { status: 404 }))
 
 export default router

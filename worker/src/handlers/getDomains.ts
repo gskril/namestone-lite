@@ -4,12 +4,14 @@ import { z } from 'zod'
 
 import { createKysely } from '../db/kysely'
 import { Env } from '../env'
+import { parseVersion } from '../utils'
 
 const schema = z.object({
   address: z.string().refine(isAddress),
 })
 
 export async function getDomains(req: IRequest, env: Env) {
+  const { network } = parseVersion(req)
   const safeParse = schema.safeParse(req.query)
 
   if (!safeParse.success) {
@@ -36,6 +38,7 @@ export async function getDomains(req: IRequest, env: Env) {
       'in',
       admin.map((a) => a.domain_id)
     )
+    .where('network', '=', network)
     .where('deleted_at', 'is', null)
     .execute()
 

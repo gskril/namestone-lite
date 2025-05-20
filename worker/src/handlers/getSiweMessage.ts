@@ -5,6 +5,7 @@ import { z } from 'zod'
 
 import { createKysely } from '../db/kysely'
 import { Env } from '../env'
+import { parseVersion } from '../utils'
 
 const schema = z.object({
   address: z.string().refine(isAddress),
@@ -17,6 +18,7 @@ const schema = z.object({
 
 // https://namestone.com/docs/get-siwe-message
 export async function getSiweMessage(req: IRequest, env: Env) {
+  parseVersion(req)
   const { address, domain, uri } = schema.parse(req.query)
 
   const nonce = generateSiweNonce()

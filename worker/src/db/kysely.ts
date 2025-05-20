@@ -16,7 +16,7 @@ interface BaseName {
   coin_types: Generated<JSON>
   created_at: GeneratedAlways<Date>
   updated_at: ColumnType<Date, never, string | undefined>
-  deleted_at: ColumnType<Date, never, null>
+  deleted_at: ColumnType<Date, never, string | null>
 }
 
 export interface Database {
@@ -35,7 +35,7 @@ export interface Database {
     domain_id: number
     key: string
     created_at: GeneratedAlways<Date>
-    deleted_at: ColumnType<Date, never, null>
+    deleted_at: ColumnType<Date, never, string | null>
   }
 
   admin: {
@@ -43,7 +43,7 @@ export interface Database {
     domain_id: number
     address: Address
     created_at: GeneratedAlways<Date>
-    deleted_at: ColumnType<Date, never, null>
+    deleted_at: ColumnType<Date, never, string | null>
   }
 
   siwe: {

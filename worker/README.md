@@ -15,7 +15,7 @@
   - [x] Enable Domain
   - [x] Get SIWE Message
 - [x] Add API key verification
-- [ ] Add network support
+- [x] Add network support
 
 ## API Routes
 

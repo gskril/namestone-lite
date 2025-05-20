@@ -6,13 +6,15 @@ import { verifyApiKey } from '../auth'
 import { Database, createKysely } from '../db/kysely'
 import { Env } from '../env'
 import { validator } from '../models'
+import { parseVersion } from '../utils'
 
 const schema = validator.nameObject.extend({
   name: z.string().min(1),
 })
 
-export async function setName(request: IRequest, env: Env): Promise<Response> {
-  const safeParse = schema.safeParse(await request.json())
+export async function setName(req: IRequest, env: Env): Promise<Response> {
+  const { network } = parseVersion(req)
+  const safeParse = schema.safeParse(await req.json())
 
   if (!safeParse.success) {
     return Response.json(
@@ -30,7 +32,7 @@ export async function setName(request: IRequest, env: Env): Promise<Response> {
 
   const db = createKysely(env)
 
-  const isAuthed = await verifyApiKey({ request, domain, db })
+  const isAuthed = await verifyApiKey({ req, domain, db })
 
   if (!isAuthed) {
     return Response.json(
@@ -43,6 +45,7 @@ export async function setName(request: IRequest, env: Env): Promise<Response> {
     .selectFrom('domain')
     .select('id')
     .where('name', '=', domain)
+    .where('network', '=', network)
     .where('deleted_at', 'is', null)
     .executeTakeFirst()
 
