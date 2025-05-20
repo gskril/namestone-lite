@@ -35,15 +35,6 @@ export async function enableDomain(req: IRequest, env: Env) {
 
   const { email, address, domain, signature, cycle_key } = safeParse.data
 
-  const owner = await getOwner(domain, env)
-
-  if (owner !== address) {
-    return Response.json(
-      { success: false, error: 'Your wallet needs to own the domain' },
-      { status: 400 }
-    )
-  }
-
   const db = createKysely(env)
   const savedSiweMessage = await db
     .selectFrom('siwe')
@@ -74,6 +65,34 @@ export async function enableDomain(req: IRequest, env: Env) {
       { success: false, error: 'Invalid signature' },
       { status: 401 }
     )
+  }
+
+  const existingDomain = await db
+    .selectFrom('domain')
+    .select(['id'])
+    .where('name', '=', domain)
+    .where('network', '=', network)
+    .executeTakeFirst()
+
+  // Check if the caller is an admin of the domain
+  let isDomainAdmin = false
+  if (existingDomain) {
+    isDomainAdmin = !!(await db
+      .selectFrom('admin')
+      .where('domain_id', '=', existingDomain.id)
+      .where('address', '=', address)
+      .executeTakeFirst())
+  }
+
+  // If the domain already exists and the caller is an admin, we don't need to do ownership checks
+  if (!isDomainAdmin) {
+    const owner = await getOwner(domain, env)
+    if (owner !== address) {
+      return Response.json(
+        { success: false, error: 'Your wallet needs to own the domain' },
+        { status: 400 }
+      )
+    }
   }
 
   const domainInsert = await db
