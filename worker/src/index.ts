@@ -35,6 +35,19 @@ router
   .post('/:version/enable-domain', (req, env) => enableDomain(req, env))
   .post('/:version/set-domain', (req, env) => setDomain(req, env))
   .post('/:version/set-name', (req, env) => setName(req, env))
+  .all('/proxy', async (req) => {
+    const url = new URL(req.query.url as string)
+    const response = await fetch(url, {
+      method: req.method,
+      headers: req.headers,
+      body: req.body,
+    })
+
+    return new Response(response.body, {
+      status: response.status,
+      headers: response.headers,
+    })
+  })
   .all('*', () => new Response('Not found', { status: 404 }))
 
 export default router
