@@ -30,6 +30,8 @@ router
   .get('/:version/health', () => Response.json({ success: true }))
   .get('/:version/search-names', (req, env) => searchNames(req, env))
   .post('/:version/delete-name', (req, env) => deleteName(req, env))
+  // revoke-name is a legacy route and was renamed to delete-name
+  .post('/:version/revoke-name', (req, env) => deleteName(req, env))
   .post('/:version/enable-domain', (req, env) => enableDomain(req, env))
   .post('/:version/set-domain', (req, env) => setDomain(req, env))
   .post('/:version/set-name', (req, env) => setName(req, env))

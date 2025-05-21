@@ -1,3 +1,10 @@
+import { AlertCircle } from 'lucide-react'
+import { useParams } from 'react-router-dom'
+import { toast } from 'sonner'
+import { Address } from 'viem'
+import { useEnsAvatar, useEnsName } from 'wagmi'
+
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import {
   Table,
   TableBody,
@@ -7,22 +14,17 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { getApiKey } from '@/hooks/useLocalApiKey'
 import { useDomain, useNames } from '@/hooks/useNamestone'
-import { useParams } from 'react-router-dom'
-import { Button } from './ui/button'
 import { namestoneClient } from '@/lib/namestone'
-import { toast } from 'sonner'
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import { AlertCircle } from 'lucide-react'
+import { truncateAddress } from '@/lib/utils'
+
 import { AddName } from './AddName'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { EditName } from './EditName'
+import { Button } from './ui/button'
 import { Input } from './ui/input'
 import { Label } from './ui/label'
-import { useEnsAvatar, useEnsName } from 'wagmi'
-import { Address } from 'viem'
-import { truncateAddress } from '@/lib/utils'
-import { EditName } from './EditName'
 
 export function NamesTable() {
   const { domain } = useParams()
@@ -87,7 +89,10 @@ export function NamesTable() {
 
                         toast.promise(promise, {
                           loading: 'Deleting...',
-                          success: 'Deleted!',
+                          success: () => {
+                            names.refetch()
+                            return 'Deleted!'
+                          },
                           error: 'Failed to delete',
                         })
 
@@ -120,7 +125,7 @@ export function NamesTable() {
           <div className="flex flex-col gap-1.5">
             <Label className="text-base font-semibold">Admins</Label>
             <div className="flex flex-col gap-2">
-              {nsDomain.data?.admins.map((admin) => (
+              {nsDomain.data?.admins?.map((admin) => (
                 <InlineProfile key={admin} address={admin} />
               ))}
             </div>
