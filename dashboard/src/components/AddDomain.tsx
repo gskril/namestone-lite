@@ -1,4 +1,3 @@
-import { useQuery } from '@tanstack/react-query'
 import { Plus } from 'lucide-react'
 import { toast } from 'sonner'
 import { useAccount, useSignMessage } from 'wagmi'
@@ -16,7 +15,6 @@ import {
 import { useDomains } from '@/hooks/useDomains'
 import { setApiKey } from '@/hooks/useLocalApiKey'
 import { useGetSiweMessage } from '@/hooks/useNamestone'
-import { env } from '@/lib/env'
 import { namestoneClient } from '@/lib/namestone'
 
 import { Button } from './ui/button'
