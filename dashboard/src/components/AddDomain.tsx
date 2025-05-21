@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/alert-dialog'
 import { useDomains } from '@/hooks/useDomains'
 import { setApiKey } from '@/hooks/useLocalApiKey'
+import { useGetSiweMessage } from '@/hooks/useNamestone'
 import { env } from '@/lib/env'
 import { namestoneClient } from '@/lib/namestone'
 
@@ -25,17 +26,7 @@ export function AddDomain() {
   const { address } = useAccount()
   const domains = useDomains()
   const siwe = useSignMessage()
-
-  const { data: siweMessage } = useQuery({
-    queryKey: ['siwe-message', address],
-    queryFn: async () =>
-      namestoneClient().getSiweMessage({
-        address: address!,
-        domain: env.appUrl,
-        uri: env.apiUrl,
-      }),
-    enabled: !!address,
-  })
+  const { data: siweMessage } = useGetSiweMessage(address)
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()

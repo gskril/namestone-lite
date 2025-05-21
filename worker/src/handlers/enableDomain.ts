@@ -79,6 +79,7 @@ export async function enableDomain(req: IRequest, env: Env) {
   if (existingDomain) {
     isDomainAdmin = !!(await db
       .selectFrom('admin')
+      .select('id')
       .where('domain_id', '=', existingDomain.id)
       .where('address', '=', address)
       .executeTakeFirst())
@@ -105,7 +106,6 @@ export async function enableDomain(req: IRequest, env: Env) {
     })
     .onConflict((oc) =>
       oc.columns(['name', 'network']).doUpdateSet({
-        email,
         updated_at: new Date().toISOString(),
         deleted_at: null,
       })

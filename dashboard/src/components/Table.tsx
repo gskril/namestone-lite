@@ -2,9 +2,8 @@ import { AlertCircle } from 'lucide-react'
 import { useParams } from 'react-router-dom'
 import { toast } from 'sonner'
 import { Address } from 'viem'
-import { useEnsAvatar, useEnsName } from 'wagmi'
+import { useAccount, useEnsAvatar, useEnsName, useSignMessage } from 'wagmi'
 
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import {
   Table,
   TableBody,
@@ -15,8 +14,8 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { getApiKey } from '@/hooks/useLocalApiKey'
-import { useDomain, useNames } from '@/hooks/useNamestone'
+import { getApiKey, setApiKey } from '@/hooks/useLocalApiKey'
+import { useDomain, useGetSiweMessage, useNames } from '@/hooks/useNamestone'
 import { namestoneClient } from '@/lib/namestone'
 import { truncateAddress } from '@/lib/utils'
 
@@ -27,10 +26,13 @@ import { Input } from './ui/input'
 import { Label } from './ui/label'
 
 export function NamesTable() {
+  const { address } = useAccount()
   const { domain } = useParams()
   const nsDomain = useDomain(domain)
   const apiKey = getApiKey(domain)
   const names = useNames(domain)
+  const { data: siweMessage } = useGetSiweMessage(address)
+  const { signMessageAsync } = useSignMessage()
 
   return (
     <div className="flex flex-col gap-4">
@@ -41,14 +43,40 @@ export function NamesTable() {
         )}
       </div>
 
-      {!!domain && !apiKey && (
-        <Alert variant="destructive">
+      {!!domain && !!address && !apiKey && (
+        <div className="border-destructive bg-destructive/1 text-destructive flex flex-col gap-2 rounded-lg border p-4 text-sm">
           <AlertCircle className="h-4 w-4" />
-          <AlertTitle>No API Key</AlertTitle>
-          <AlertDescription>
-            "Add Domain" on the sidebar to manage this domain.
-          </AlertDescription>
-        </Alert>
+          <span className="font-medium tracking-tight">No API Key</span>
+          <Button
+            variant="outline"
+            className="border-destructive hover:bg-destructive/1 text-destructive! w-fit bg-white"
+            onClick={async () => {
+              const signature = await signMessageAsync({
+                message: siweMessage!,
+              })
+
+              const promise = namestoneClient().enableDomain({
+                company_name: 'Fake company',
+                email: 'bob@example.com',
+                address,
+                domain,
+                signature,
+              })
+
+              toast.promise(promise, {
+                loading: 'Enabling...',
+                success: (res) => {
+                  setApiKey(domain, res.api_key)
+                  names.refetch()
+                  return 'Enabled!'
+                },
+                error: 'Failed to enable',
+              })
+            }}
+          >
+            Enable Domain
+          </Button>
+        </div>
       )}
 
       <Tabs defaultValue="names">
