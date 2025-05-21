@@ -32,7 +32,7 @@ export async function getDomains(req: IRequest, env: Env) {
 
   const domains = await db
     .selectFrom('domain')
-    .select(['name'])
+    .select(['name as domain'])
     .where(
       'id',
       'in',

@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import {
   injected,
   useAccount,
@@ -6,11 +7,10 @@ import {
   useEnsName,
 } from 'wagmi'
 
+import { AddDomain } from '@/components/AddDomain'
 import { NamesTable } from '@/components/Table'
 import { Button } from '@/components/ui/button'
 import { useDomains } from '@/hooks/useDomains'
-import { AddDomain } from '@/components/AddDomain'
-import { Link } from 'react-router-dom'
 import { truncateAddress } from '@/lib/utils'
 
 export function Home() {
@@ -44,9 +44,9 @@ export function Home() {
         <div className="border-r border-gray-200 pr-4">
           <h2 className="pb-2 text-lg font-bold">Domains</h2>
           <div className="flex flex-col gap-2">
-            {domains?.map((domain) => (
-              <Link key={domain.name} to={`/${domain.name}`}>
-                {domain.name}
+            {domains?.map(({ domain }) => (
+              <Link key={domain} to={`/${domain}`}>
+                {domain}
               </Link>
             ))}
 
